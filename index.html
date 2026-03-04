@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Challenge Ticker</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0a0c;
+    font-family: 'Barlow', sans-serif;
+    width: 1183px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  .ticker-wrap {
+    width: 1183px;
+    height: 64px;
+    background: #0d0d0f;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    align-items: stretch;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .ticker-wrap::after {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: #0c213c;
+    z-index: 10;
+  }
+
+  .label {
+    background: #0c213c;
+    color: #fff;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 13px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 0 22px 0 25px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    z-index: 2;
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 0 100%);
+    padding-right: 30px;
+  }
+
+  .label svg {
+    filter: drop-shadow(0 0 4px rgba(255,255,255,0.4));
+  }
+
+  .scroll-area {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    height: 64px;
+  }
+
+  .scroll-area::before, .scroll-area::after {
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 60px;
+    z-index: 3;
+    pointer-events: none;
+  }
+  .scroll-area::before { left: 0; background: linear-gradient(90deg, #0d0d0f 0%, transparent 100%); }
+  .scroll-area::after  { right: 0; background: linear-gradient(-90deg, #0d0d0f 0%, transparent 100%); }
+
+  .scroll-track {
+    display: flex;
+    align-items: center;
+    height: 64px;
+    white-space: nowrap;
+    animation: ticker 32s linear infinite;
+    will-change: transform;
+  }
+
+  @keyframes ticker {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  .entry {
+    display: inline-flex;
+    align-items: center;
+    padding: 0 8px;
+    height: 64px;
+  }
+
+  .entry-index {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 11px;
+    color: #0c213c;
+    letter-spacing: 1px;
+    margin-right: 10px;
+    opacity: 0.7;
+    line-height: 1;
+  }
+
+  .entry-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 22px;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    line-height: 1;
+  }
+
+  .entry-arrow {
+    color: #0c213c;
+    font-size: 12px;
+    padding: 0 14px;
+    opacity: 0.9;
+    line-height: 1;
+  }
+
+  .entry-challenge {
+    font-family: 'Barlow', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.78);
+    letter-spacing: 0.3px;
+    line-height: 1;
+  }
+
+  .sep {
+    display: inline-block;
+    width: 1px;
+    height: 22px;
+    background: rgba(255,255,255,0.12);
+    margin: 0 28px;
+    vertical-align: middle;
+    flex-shrink: 0;
+  }
+
+  .admin {
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    max-width: 1100px;
+  }
+
+  .top-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .field {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  label {
+    color: rgba(255,255,255,0.4);
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  input[type=text] {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: #fff;
+    padding: 6px 10px;
+    font-size: 13px;
+    font-family: 'Barlow', sans-serif;
+    border-radius: 3px;
+    outline: none;
+    height: 34px;
+  }
+  input[type=text]:focus { border-color: #0c213c; }
+  #inName { width: 140px; }
+  #inChallenge { width: 280px; }
+
+  .btn {
+    background: #0c213c;
+    color: #fff;
+    border: none;
+    padding: 0 16px;
+    height: 34px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  .btn:hover { background: #ff1a30; }
+  .btn.ghost {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+  .btn.ghost:hover { background: rgba(255,255,255,0.15); }
+
+  .divider {
+    width: 1px;
+    height: 34px;
+    background: rgba(255,255,255,0.1);
+    flex-shrink: 0;
+  }
+
+  .speed-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  input[type=range] { accent-color: #0c213c; width: 80px; height: 34px; }
+
+  .list-header {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #0c213c;
+    padding: 2px 0;
+    border-bottom: 1px solid rgba(12,33,60,0.3);
+    padding-bottom: 5px;
+  }
+
+  .entry-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px 10px;
+  }
+
+  .eitem {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.6);
+    padding: 4px 6px;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    min-width: 0;
+  }
+  .eitem:hover { background: rgba(255,255,255,0.07); }
+  .enum {
+    color: #0c213c;
+    font-weight: 700;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    flex-shrink: 0;
+    min-width: 16px;
+  }
+  .etext {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+  }
+  .ename { color: #fff; font-weight: 600; }
+  .edel {
+    color: rgba(255,255,255,0.2);
+    cursor: pointer;
+    font-size: 13px;
+    flex-shrink: 0;
+    padding: 0 2px;
+    line-height: 1;
+  }
+  .edel:hover { color: #0c213c; }
+
+  .empty-msg {
+    color: rgba(255,255,255,0.25);
+    font-size: 12px;
+    padding: 8px 0;
+  }
+
+  .live-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #2ecc71;
+    animation: pulse 1.5s ease-in-out infinite;
+    display: inline-block;
+    flex-shrink: 0;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  .saved-badge {
+    font-size: 10px;
+    color: #2ecc71;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .saved-badge.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<!-- TICKER: set OBS browser source height = 64 -->
+<div class="ticker-wrap">
+  <div class="label">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+    Challenges
+  </div>
+  <div class="scroll-area">
+    <div class="scroll-track" id="scrollTrack"></div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div class="admin">
+  <div class="top-row">
+    <div class="field">
+      <label>Name</label>
+      <input type="text" id="inName" placeholder="e.g. Jamie">
+    </div>
+    <div class="field">
+      <label>Challenge</label>
+      <input type="text" id="inChallenge" placeholder="e.g. 100 push-ups">
+    </div>
+    <button class="btn" onclick="addEntry()">+ Add</button>
+
+    <div class="divider"></div>
+
+    <button class="btn ghost" onclick="togglePause()" id="pauseBtn">⏸ Pause</button>
+    <button class="btn ghost" onclick="clearAll()">🗑 Clear</button>
+
+    <div class="divider"></div>
+
+    <div class="speed-wrap">
+      <label>Speed</label>
+      <input type="range" id="speedSlider" min="10" max="60" value="32" oninput="setSpeed(this.value)">
+    </div>
+
+    <div class="divider"></div>
+
+    <span class="live-dot"></span>
+    <span style="color:rgba(255,255,255,0.25);font-size:11px;">OBS source = <strong style="color:#0c213c">1183 × 64px</strong></span>
+    <span class="saved-badge" id="savedBadge">✓ Saved</span>
+  </div>
+
+  <div class="list-header">Challengers (<span id="ecount">0</span>)</div>
+  <div id="entryGrid" class="entry-grid"></div>
+</div>
+
+<script>
+  const STORAGE_KEY = 'challenge_ticker_entries';
+  const SPEED_KEY = 'challenge_ticker_speed';
+
+  // Load from localStorage or start empty
+  let entries = [];
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) entries = JSON.parse(saved);
+  } catch(e) {}
+
+  let paused = false;
+  let speed = parseInt(localStorage.getItem(SPEED_KEY) || '32');
+
+  // Sync slider to saved speed
+  document.getElementById('speedSlider').value = speed;
+
+  function save() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+      localStorage.setItem(SPEED_KEY, String(speed));
+      const badge = document.getElementById('savedBadge');
+      badge.classList.add('show');
+      setTimeout(() => badge.classList.remove('show'), 1500);
+    } catch(e) {}
+  }
+
+  function esc(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function buildTicker() {
+    const track = document.getElementById('scrollTrack');
+    if (!entries.length) {
+      track.innerHTML = '<span style="color:rgba(255,255,255,0.25);padding:0 40px;font-size:14px;">No challengers yet</span>';
+      track.style.animation = 'none';
+      return;
+    }
+
+    const singleHTML = entries.map((e, i) =>
+      `<span class="entry">` +
+        `<span class="entry-index">#${String(i+1).padStart(2,'0')}</span>` +
+        `<span class="entry-name">${esc(e.name)}</span>` +
+        `<span class="entry-arrow">▶</span>` +
+        `<span class="entry-challenge">${esc(e.challenge)}</span>` +
+      `</span><span class="sep"></span>`
+    ).join('');
+
+    track.innerHTML = singleHTML;
+    const singleWidth = track.scrollWidth;
+    const screenWidth = 1183;
+    const repeats = Math.ceil((screenWidth * 3) / singleWidth) + 1;
+
+    const repeated = singleHTML.repeat(repeats);
+    track.innerHTML = repeated + repeated;
+
+    track.style.animation = 'none';
+    track.offsetHeight;
+    const totalWidth = track.scrollWidth / 2;
+    const duration = totalWidth / (1183 / speed);
+    track.style.animation = `ticker ${duration}s linear infinite`;
+    if (paused) track.style.animationPlayState = 'paused';
+  }
+
+  function renderList() {
+    document.getElementById('ecount').textContent = entries.length;
+    const grid = document.getElementById('entryGrid');
+    if (!entries.length) {
+      grid.innerHTML = '<span class="empty-msg">No challengers added yet</span>';
+      return;
+    }
+    grid.innerHTML = entries.map((e, i) => `
+      <div class="eitem">
+        <span class="enum">${i+1}</span>
+        <span class="etext"><span class="ename">${esc(e.name)}</span> — ${esc(e.challenge)}</span>
+        <span class="edel" onclick="del(${i})" title="Remove">✕</span>
+      </div>`).join('');
+  }
+
+  function addEntry() {
+    const n = document.getElementById('inName').value.trim();
+    const c = document.getElementById('inChallenge').value.trim();
+    if (!n || !c) return;
+    entries.push({ name: n, challenge: c });
+    document.getElementById('inName').value = '';
+    document.getElementById('inChallenge').value = '';
+    document.getElementById('inName').focus();
+    refresh();
+    save();
+  }
+
+  function del(i) { entries.splice(i, 1); refresh(); save(); }
+
+  function clearAll() {
+    if (!entries.length) return;
+    if (confirm('Clear all challengers?')) { entries = []; refresh(); save(); }
+  }
+
+  function togglePause() {
+    paused = !paused;
+    document.getElementById('scrollTrack').style.animationPlayState = paused ? 'paused' : 'running';
+    document.getElementById('pauseBtn').textContent = paused ? '▶ Play' : '⏸ Pause';
+  }
+
+  function setSpeed(v) {
+    speed = parseInt(v);
+    buildTicker();
+    save();
+  }
+
+  function refresh() { buildTicker(); renderList(); }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      const id = document.activeElement.id;
+      if (id === 'inName' || id === 'inChallenge') addEntry();
+    }
+  });
+
+  refresh();
+</script>
+</body>
+</html>
